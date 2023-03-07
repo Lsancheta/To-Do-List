@@ -1,11 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() => runApp(const MyApp());
+void main()  async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MyApp());
+}//=> runApp(const MyApp());
+
 
 class MyApp extends StatelessWidget{
-  //await Firebase.initializeApp();
   const MyApp({super.key});
-
   @override
   Widget build(BuildContext context){
     return const MaterialApp(
@@ -24,9 +29,12 @@ class MyHome extends StatefulWidget{
   }
 }
 class MyHomeState extends State<MyHome>{
+  final db = FirebaseFirestore.instance;
   final TextEditingController taskController =  TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final List<String> _task = [];
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,8 +78,10 @@ class MyHomeState extends State<MyHome>{
                           child: const Text('Add', style:TextStyle(fontSize:20),),
                         onPressed:(){
                             if(_formKey.currentState!.validate()){
-                              setState((){
-                                _task.add(taskController.text);
+                              setState(() async {
+                                DocumentReference docRef= await;
+                                FirebaseFirestore.instance.collection('task').add();
+                                final taskName = taskController.text;
                               });
                               taskController.clear();
                             }
